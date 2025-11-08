@@ -1,29 +1,30 @@
 # MCA Web Scanner
 
-**সুপার-শর্ট বর্ণনা:**  
-MCA Web Scanner হলো একটি passive ওয়েব স্ক্যানার (Termux-friendly) — এটি সাইটের ফর্ম, লিংক, হেডার, কুকি ইত্যাদি বিশ্লেষণ করে সম্ভাব্য সমস্যার (XSS, SQLi, SSRF, Clickjacking, TLS mixed-content, directory listing) হিউরিস্টিক ড্রিভেন রিপোর্ট তৈরি করে। **WARNING:** কেবল আপনার নিজস্ব বা অনুমোদিত টার্গেট স্ক্যান করুন।
+**Short description**  
+MCA Web Scanner is a passive web scanner (Termux-friendly) that collects forms, links, headers, cookies and applies heuristic checks for common issues (XSS, SQLi, SSRF, clickjacking, mixed-content/TLS issues, directory listing). **WARNING:** Only scan targets you own or have explicit permission to test.
 
 ---
 
-## ফিচারসমূহ
-- Passive crawling (ফর্ম, লিঙ্ক, হেডার, কুকি সংগ্রহ)
-- সহজ-সুজুগ terminal আউটপুট (colored & structured)
-- HTML ও JSON রিপোর্ট জেনারেট করা যায়
-- হিউরিস্টিক ডিটেকশন: XSS, SQLi, SSRF, Clickjacking, directory listing, ইত্যাদি
-- Termux-ভিত্তিক ব্যবহার-দূস্তরদের কথা মাথায় রেখে নির্মিত
+## Features
+- Passive crawling (collects forms, links, headers, cookies)
+- Heuristic detection for: Reflected XSS, SQL Injection, SSRF, Clickjacking, Directory Listing, Insecure TLS, etc.
+- Clean terminal output (colored & structured)
+- HTML and JSON report generation
+- Designed to be usable on Termux / mobile environments
 
 ---
 
-## প্রয়োজনীয়তা (Dependencies)
-Python 3.8+ এবং নিচের প্যাকেজগুলো ইনস্টল থাকা উচিত:
-- `aiohttp`
-- `beautifulsoup4` (bs4)
-- `jinja2`
-- `colorama`
-- `tqdm`
-- (ঐচ্ছিক) `rich` — উন্নত টার্মিনাল আউটপুটের জন্য
+## Requirements / Dependencies
+- Python 3.8+
+- The following Python packages:
+  - `aiohttp`
+  - `beautifulsoup4` (bs4)
+  - `jinja2`
+  - `colorama`
+  - `tqdm`
+  - (optional) `rich` — for enhanced terminal output
 
-Termux এ একবারে ইনস্টল করার উদাহরণ:
+Install example (Termux):
 ```bash
 pkg update && pkg upgrade -y
 pkg install python -y
@@ -32,55 +33,61 @@ pip install aiohttp beautifulsoup4 jinja2 colorama tqdm rich
 
 ---
 
-## ব্যবহার (Usage)
-**সাধারণভাবে CLI থেকে চালানো:**
+## Usage
+Run the scanner from the command line:
+
 ```bash
 python MCA_Web_Scanner.py -t https://example.com
 ```
 
-**Quick (interactive) mode:**
+Interactive quick mode:
+
 ```bash
 python MCA_Web_Scanner.py
-# তারপর Prompt এ Target URL পেস্ট করো
+# Paste the target URL when prompted
 ```
 
-**রিপোর্ট জেনারেট করা (HTML / JSON):**
+Generate HTML and JSON reports:
+
 ```bash
 python MCA_Web_Scanner.py -t https://example.com --output report.html --json report.json --assume-yes
 ```
 
-**বাইল্ড-ইন হেল্প:**
+View help:
+
 ```bash
 python MCA_Web_Scanner.py -h
 ```
 
 ---
 
-## CLI Flags (সংক্ষিপ্ত)
-- `-t, --target` : টার্গেট URL
-- `-m, --max-pages` : সর্বোচ্চ পেজ ক্রল (ডিফল্ট 30)
-- `-r, --rate` : requests per second (ডিফল্ট 2.0)
-- `--output` : HTML রিপোর্ট ফাইল পথ
-- `--json` : JSON রিপোর্ট ফাইল পথ
-- `--assume-yes` : permission prompt স্কিপ করে স্বয়ংক্ৰিয় YES ধরা
+## CLI Options (short)
+- `-t, --target` : Target URL to scan
+- `-m, --max-pages` : Maximum pages to crawl (default: 30)
+- `-r, --rate` : Requests per second (default: 2.0)
+- `--output` : HTML output path (e.g. report.html)
+- `--json` : JSON output path (e.g. report.json)
+- `--assume-yes` : Skip interactive permission prompt (assume YES)
 
 ---
 
-## ডেমো আউটপুট
-টুল চালানোর পরে টার্মিনালে সারসংক্ষেপ দেখাবে (High / Medium / Low risks) এবং `INPUT POINT` নামক বাক্সে পাওয়া ইনপুট-পয়েন্টের উদাহরণ দেখাবে। যদি `--output report.html` সেট করা থাকে তাহলে সুন্দর HTML রিপোর্টও পাওয়া যাবে।
+## Output
+- Summary printed to the terminal showing High / Medium / Low findings.
+- `INPUT POINT` box lists up to two example input points (form actions or query-parameter examples).
+- If `--output` or `--json` is used, an HTML and/or JSON report file will be saved.
 
 ---
 
-## KNOWN ISSUES ও Troubleshooting
-1. **argparse import error**  
-   - পূর্বে রিপোজিটর কোডে `import argparset` ভুল ছিল — এটি `import argparse` হওয়া উচিত। আপডেটেড ফাইলে এই অংশ ঠিক করা আছে।
+## Known Issues & Troubleshooting
+1. **`import argparset` typo**  
+   - The original code had a typo (`argparset`). It must be `import argparse`. The fixed copy in this repo replaces that.
 
-2. **rich Console / Panel error**  
-   - যদি তোমার টার্মিনালে error আসে:  
+2. **`rich` Console / Panel error**  
+   - If you see:
      ```
      AttributeError: 'Panel' object has no attribute 'soft_wrap'
      ```
-     সম্ভাব্য কারণ: কোথাও `Console` নামকে `Panel(...)` দিয়ে ওভাররাইট করা হয়েছে। ঠিক ব্যবহার:
+     The likely cause is that `Console` (class) got accidentally reassigned to a `Panel` instance. Use the Console instance correctly:
      ```python
      from rich.console import Console
      from rich.panel import Panel
@@ -88,26 +95,26 @@ python MCA_Web_Scanner.py -h
      console = Console()
      console.print(Panel("Hello", title="Info"))
      ```
-     নিশ্চিত করো কোথাও `Console = Panel(...)` বা `Console = ...` মত reassignment নেই।
+     Make sure you do **not** have `Console = Panel(...)` anywhere in the code.
 
-3. **Built-in module attempts to pip install**  
-   - স্ক্রিপ্টে `asyncio` এবং `datetime` pip-install করার চেষ্টা করা থাকলে সেটি অপ্রয়োজনীয়; এগুলো Python built-in। রিপোজিটর-এর fixed copy-তে এই অংশ ঠিক করা আছে।
+3. **Avoid pip-installing built-in modules**  
+   - `asyncio` and `datetime` are built-in Python modules; do not try to `pip install` them. The fixed copy removes attempts to pip-install those modules.
 
-4. **Permission / Legal**  
-   - সর্বদা নিশ্চিত করো টার্গেট তোমার নিজস্ব বা অনুমোদিত। অননুমোদিত স্ক্যানিং আইনি সমস্যা তৈরি করতে পারে।
+4. **Permissions & Legal**  
+   - Only scan hosts you own or have explicit permission to test. Unauthorized scanning can be illegal and may result in penalties.
 
 ---
 
-## কনট্রিবিউশন।
-- বাগ রিপোর্ট / feature request: Issues খুলে দিন।  
-- Pull requests গ্রহণ করা হবে — কনফিগারেশন, প্লাগইন সিস্টেম বা reporting উন্নত করার প্রস্তাব歓迎।
+## Contributing
+- Issues and pull requests are welcome.
+- Suggested improvements: plugin architecture, more robust TLS checks, rate-limiting options, authentication testing workflows.
 
 ---
 
 ## License
-MIT License — বিস্তারিত LICENSE ফাইলে আছে (অথবা নীচের হিসেবে যোগ করো)।
+This project is provided under the **MIT License**. Add a `LICENSE` file if you want to include the full license text.
 
 ---
 
-## Contact / Author
-Project maintained by the repository owner. যদি README-তে তোমার নাম/ইমেইল/সোশ্যাল যোগ করতে চাও, নিচে বসিয়ে দাও — আমি README আপডেট করে দেবো।
+## Contact
+Maintained by the repository owner. If you want your name, email or social links included in this README, provide them and I will update the file.
